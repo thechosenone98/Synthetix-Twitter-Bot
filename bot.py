@@ -42,12 +42,12 @@ def get_soup(webdriver, url):
 
 if __name__ == "__main__":
     # Authenticate to the Twitter API
-    auth, api = twitter_authenticate(api_key="API_KEY",
-                                     api_secret_key="API_SECRET_KEY",
-                                     acc_token="ACCESS_TOKEN",
-                                     acc_secret_token="ACCESS_TOKEN_SECRET")
+    auth, api = twitter_authenticate(api_key="RWQaTX4sYI1NWSj4mMNHjeYFX",
+                                     api_secret_key="RbtRsNdjgFqMvwm3wv1SOvDVlGwBY8gyjj0mMrRKCZZNKmItUG",
+                                     acc_token="2245563404-RclRQ5ertmiTF8oABmrlrUazBP3mHDbqvq8EdWe",
+                                     acc_secret_token="YouNo75JCFHsgKksjWYDIly9rSIe8B8i6xwfpqCbV9vQo")
     # Authenticate to the CryptoCompare API
-    crypto_compare_key = "CRYPTOCOMPARE_API_KEY"
+    crypto_compare_key = "fb96b9af55eaf15111f855c3f27ee63663739132935cc725e6d057558dfac2e0"
     cryptocompare.cryptocompare._set_api_key_parameter(crypto_compare_key)
     # change this to your own Chrome path (you could use a portable version too,
     # but you have to make sure your chromedriver.exe version matches with you Chrome version)
