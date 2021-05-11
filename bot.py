@@ -41,11 +41,16 @@ def get_soup(webdriver, url):
 
 
 if __name__ == "__main__":
+    # Authenticate to the Twitter API
     auth, api = twitter_authenticate(api_key="API_KEY",
                                      api_secret_key="API_SECRET_KEY",
                                      acc_token="ACCESS_TOKEN",
                                      acc_secret_token="ACCESS_TOKEN_SECRET")
-    # change this to your own chrom path (you could use a portable version too)
+    # Authenticate to the CryptoCompare API
+    crypto_compare_key = "CRYPTOCOMPARE_API_KEY"
+    cryptocompare.cryptocompare._set_api_key_parameter(crypto_compare_key)
+    # change this to your own Chrome path (you could use a portable version too,
+    # but you have to make sure your chromedriver.exe version matches with you Chrome version)
     chrome_path = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
     opts = Options()
     opts.binary_location = chrome_path
@@ -67,9 +72,6 @@ if __name__ == "__main__":
     ]
     # Where we will hold the numbers
     data = []
-    # URL to the API to convert currency
-    crypto_compare_key = "fb96b9af55eaf15111f855c3f27ee63663739132935cc725e6d057558dfac2e0"
-    cryptocompare.cryptocompare._set_api_key_parameter(crypto_compare_key)
     try:
         # Instantiate webdriver
         driver = webdriver.Chrome(options=opts, executable_path=chrome_driver_path)
