@@ -10,7 +10,8 @@ TODOs:
 1. git clone this repo
 2. Make a virtual evnvironment
 3. pip install requirement.txt in the venv you just created
-4. Create an app in your Twitter developper account
-5. Fill in the bot.py file with your Twitter app API keys and chrome path
-6. Run bot.py (python bot.py, after having activated your venv of course)
-7. Enjoy :)
+4. Create an app in your Twitter developper account (https://developer.twitter.com/en)
+5. Create an account on https://www.cryptocompare.com/ and get your API key
+6. Fill in the bot.py file with your Twitter app, cryptocompare API keys and Chrome path
+7. Run bot.py (python bot.py, after having activated your venv of course)
+8. Enjoy :)
