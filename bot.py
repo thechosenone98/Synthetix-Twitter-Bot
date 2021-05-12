@@ -24,6 +24,19 @@ def twitter_authenticate(api_key, api_secret_key, acc_token, acc_secret_token):
     return auth_handler, twitter_api
 
 
+def load_chrome_driver():
+    options = Options()
+
+    options.binary_location = os.environ.get('GOOGLE_CHROME_BIN')
+
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--remote-debugging-port=9222')
+
+    return webdriver.Chrome(executable_path=str(os.environ.get('CHROMEDRIVER_PATH')), options=options)
+
+
 def get_soup(webdriver, url):
     try:
         if url is not None:
@@ -51,15 +64,15 @@ if __name__ == "__main__":
     cryptocompare.cryptocompare._set_api_key_parameter(crypto_compare_key)
     # change this to your own Chrome path (you could use a portable version too,
     # but you have to make sure your chromedriver.exe version matches with you Chrome version)
-    chrome_path = r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
-    opts = Options()
-    opts.binary_location = chrome_path
+    #chrome_path = r"/app/.apt/usr/bin/google-chrome"
+    #opts = Options()
+    #opts.binary_location = chrome_path
     # make this path point to your chromedriver executable
-    chrome_driver_path = Path(os.getcwd()).joinpath("Selenium").joinpath("chromedriver.exe")
+    #chrome_driver_path = Path(os.getcwd()).joinpath("Selenium").joinpath("chromedriver.exe")
     driver = None
     # Scrape the stat page continuously (once every hour) and tweet the data
     selectors = [
-        ("Exchange Vol.",
+        ("Exchange Volume",
          "#__next > section > div:nth-child(3) > div.StatsRow__StatsRowContainer-sc-8kudbj-0.cLYEnH > div:nth-child(4) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
         ("Trading Fees",
          "#__next > section > div:nth-child(3) > div.StatsRow__StatsRowContainer-sc-8kudbj-0.cLYEnH > div:nth-child(2) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
@@ -67,14 +80,14 @@ if __name__ == "__main__":
          "#__next > section > div:nth-child(1) > div:nth-child(6) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
         ("BTC Collateral",
          "#__next > section > div:nth-child(1) > div:nth-child(6) > div:nth-child(2) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
-        ("SNX staked",
+        ("Amount of SNX staked",
          "#__next > section > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.gGHOuN")
     ]
     # Where we will hold the numbers
     data = []
     try:
         # Instantiate webdriver
-        driver = webdriver.Chrome(options=opts, executable_path=chrome_driver_path)
+        driver = load_chrome_driver()
         while True:
             data.clear()
             try:
@@ -92,14 +105,14 @@ if __name__ == "__main__":
                 # Remove the collateral from the data (we only needed them for summing)
                 data.pop(2)
                 data.pop(2)
-                tweet_content = """Synthetix Info\n"""
+                tweet_content = """Synthetix Trading Info\n"""
                 for name, value in data:
                     amount = int(str(value).split('.')[0].lstrip('$').replace(',', ''))
                     tweet_content += f"{name} : ${amount:,}\n"
                 tweet_content += "💰💰💰💰💰"
                 print("Tweeting : \n" + tweet_content)
                 print(f"Length of message : {len(tweet_content)}")
-                api.update_status(tweet_content)
+                #api.update_status(tweet_content)
                 sleep(3600)
             except Exception as e:
                 break
