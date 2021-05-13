@@ -5,6 +5,7 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
+from datetime import datetime
 import cryptocompare
 
 
@@ -62,13 +63,6 @@ if __name__ == "__main__":
     # Authenticate to the CryptoCompare API
     crypto_compare_key = "CRYTPOCOMPARE_KEY"
     cryptocompare.cryptocompare._set_api_key_parameter(crypto_compare_key)
-    # change this to your own Chrome path (you could use a portable version too,
-    # but you have to make sure your chromedriver.exe version matches with you Chrome version)
-    # chrome_path = r"/app/.apt/usr/bin/google-chrome"
-    # opts = Options()
-    # opts.binary_location = chrome_path
-    # make this path point to your chromedriver executable
-    # chrome_driver_path = Path(os.getcwd()).joinpath("Selenium").joinpath("chromedriver.exe")
     driver = None
     # Scrape the stat page continuously (once every hour) and tweet the data
     selectors = [
@@ -76,11 +70,11 @@ if __name__ == "__main__":
          "#__next > section > div:nth-child(3) > div.StatsRow__StatsRowContainer-sc-8kudbj-0.cLYEnH > div:nth-child(4) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
         ("Trading Fees",
          "#__next > section > div:nth-child(3) > div.StatsRow__StatsRowContainer-sc-8kudbj-0.cLYEnH > div:nth-child(2) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
-        ("ETH Collateral",
+        ("Total Value Locked ETH",
          "#__next > section > div:nth-child(1) > div:nth-child(6) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
-        ("BTC Collateral",
+        ("Total Value Locked BTC",
          "#__next > section > div:nth-child(1) > div:nth-child(6) > div:nth-child(2) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
-        ("Amount of SNX staked",
+        ("Amount of SNX Staked",
          "#__next > section > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.gGHOuN"),
         ("SNX Market Cap",
          "#__next > section > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.gGHOuN")
@@ -101,29 +95,37 @@ if __name__ == "__main__":
                 # convert the collateral and sum them up to get total value locked
                 conversions = cryptocompare.get_price(["ETH", "BTC"], "USD")
                 print(conversions)
-                data.append(("Total value locked",
+                data.insert(4, ("Total value Locked USD",
                              float(data[2][1].replace(',', '')) * conversions['ETH']['USD'] +
                              float(data[3][1].replace(',', '')) * conversions['BTC']['USD']))
-                # Remove the collateral from the data (we only needed them for summing)
-                data.pop(2)
-                data.pop(2)
                 # Calculate amount of SNX staked as a percentage of the total available
-                staked_conv = float(str(data[-3][1]).split('.')[0].lstrip('$').replace(',', ''))
-                total_conv = float(str(data[-2][1]).split('.')[0].lstrip('$').replace(',', ''))
+                staked_conv = float(str(data[-2][1]).split('.')[0].lstrip('$').replace(',', ''))
+                total_conv = float(str(data[-1][1]).split('.')[0].lstrip('$').replace(',', ''))
                 staked_percentage = (staked_conv / total_conv) * 100
-                tweet_content = """Synthetix Trading Info\n"""
+                # Remove the market cap from the list of things to tweet, not enough place in the tweet anyway
+                data.pop()
+                # Begin building the tweet line by line
+                tweet_content = ""
                 for name, value in data:
                     # Remove commas from the number that contain them (this is because we have number that look like
                     # float and other that are formatted already. Making them all the same prevents weird special cases
                     # for the formatting done after)
-                    amount = int(str(value).split('.')[0].lstrip('$').replace(',', ''))
-                    if name == "Amount of SNX staked":
-                        tweet_content += f"{name} : ${amount:,} ({staked_percentage:.2f}% of total)\n"
+                    amount = float(str(value).split('.')[0].lstrip('$').replace(',', ''))
+                    if "ETH" in name or "BTC" in name:
+                        tweet_content += f"{name} : {amount:,.2f}\n"
+                    elif name == "Amount of SNX Staked":
+                        tweet_content += f"{name} : ${amount:,.2f} ({staked_percentage:.2f}% of total)\n"
                     else:
-                        tweet_content += f"{name} : ${amount:,}\n"
-                tweet_content += "💰💰💰💰💰"
+                        tweet_content += f"{name} : ${amount:,.2f}\n"
+
+                # Add the date to the end of the tweet
+                tweet_content += "\n" + datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+
+                # Some debug prints
                 print("Tweeting : \n" + tweet_content)
                 print(f"Length of message : {len(tweet_content)}")
+
+                # Tweet it
                 api.update_status(tweet_content)
                 sleep(3600)
             except Exception as e:
