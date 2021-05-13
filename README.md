@@ -8,6 +8,8 @@ TODOs:
 - [X] Setup Twitter Dev account and app
 - [X] Setup web scraper in Python
 - [X] Run Twitter bot in python along with the web scraper
+- [X] Deploy to Heroku
+- [X] Write a nice little guide
 
 ## Tutorial on how to use it
 1. git clone this repo
