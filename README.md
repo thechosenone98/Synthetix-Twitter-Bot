@@ -1,6 +1,9 @@
 # Synthetix-Twitter-Bot
 A simple Twitter Bot to stay informed about Synthetix stats.
 
+For proof that the bot works, here's my twitter handle. Look at the latest tweets I sent:
+[@zachariemcc](https://twitter.com/zachariemcc)
+
 TODOs:
 - [X] Setup Twitter Dev account and app
 - [X] Setup web scraper in Python
