@@ -55,20 +55,20 @@ def get_soup(webdriver, url):
 
 if __name__ == "__main__":
     # Authenticate to the Twitter API
-    auth, api = twitter_authenticate(api_key="RWQaTX4sYI1NWSj4mMNHjeYFX",
-                                     api_secret_key="RbtRsNdjgFqMvwm3wv1SOvDVlGwBY8gyjj0mMrRKCZZNKmItUG",
-                                     acc_token="2245563404-RclRQ5ertmiTF8oABmrlrUazBP3mHDbqvq8EdWe",
-                                     acc_secret_token="YouNo75JCFHsgKksjWYDIly9rSIe8B8i6xwfpqCbV9vQo")
+    auth, api = twitter_authenticate(api_key="API_KEY",
+                                     api_secret_key="API_SECRET_KEY",
+                                     acc_token="ACCESS_TOKEN",
+                                     acc_secret_token="ACCESS_TOKEN_SECRET")
     # Authenticate to the CryptoCompare API
-    crypto_compare_key = "fb96b9af55eaf15111f855c3f27ee63663739132935cc725e6d057558dfac2e0"
+    crypto_compare_key = "CRYTPOCOMPARE_KEY"
     cryptocompare.cryptocompare._set_api_key_parameter(crypto_compare_key)
     # change this to your own Chrome path (you could use a portable version too,
     # but you have to make sure your chromedriver.exe version matches with you Chrome version)
-    #chrome_path = r"/app/.apt/usr/bin/google-chrome"
-    #opts = Options()
-    #opts.binary_location = chrome_path
+    # chrome_path = r"/app/.apt/usr/bin/google-chrome"
+    # opts = Options()
+    # opts.binary_location = chrome_path
     # make this path point to your chromedriver executable
-    #chrome_driver_path = Path(os.getcwd()).joinpath("Selenium").joinpath("chromedriver.exe")
+    # chrome_driver_path = Path(os.getcwd()).joinpath("Selenium").joinpath("chromedriver.exe")
     driver = None
     # Scrape the stat page continuously (once every hour) and tweet the data
     selectors = [
@@ -81,7 +81,9 @@ if __name__ == "__main__":
         ("BTC Collateral",
          "#__next > section > div:nth-child(1) > div:nth-child(6) > div:nth-child(2) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
         ("Amount of SNX staked",
-         "#__next > section > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.gGHOuN")
+         "#__next > section > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.gGHOuN"),
+        ("SNX Market Cap",
+         "#__next > section > div:nth-child(1) > div:nth-child(3) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.gGHOuN")
     ]
     # Where we will hold the numbers
     data = []
@@ -105,14 +107,24 @@ if __name__ == "__main__":
                 # Remove the collateral from the data (we only needed them for summing)
                 data.pop(2)
                 data.pop(2)
+                # Calculate amount of SNX staked as a percentage of the total available
+                staked_conv = float(str(data[-3][1]).split('.')[0].lstrip('$').replace(',', ''))
+                total_conv = float(str(data[-2][1]).split('.')[0].lstrip('$').replace(',', ''))
+                staked_percentage = (staked_conv / total_conv) * 100
                 tweet_content = """Synthetix Trading Info\n"""
                 for name, value in data:
+                    # Remove commas from the number that contain them (this is because we have number that look like
+                    # float and other that are formatted already. Making them all the same prevents weird special cases
+                    # for the formatting done after)
                     amount = int(str(value).split('.')[0].lstrip('$').replace(',', ''))
-                    tweet_content += f"{name} : ${amount:,}\n"
+                    if name == "Amount of SNX staked":
+                        tweet_content += f"{name} : ${amount:,} ({staked_percentage:.2f}% of total)\n"
+                    else:
+                        tweet_content += f"{name} : ${amount:,}\n"
                 tweet_content += "💰💰💰💰💰"
                 print("Tweeting : \n" + tweet_content)
                 print(f"Length of message : {len(tweet_content)}")
-                #api.update_status(tweet_content)
+                api.update_status(tweet_content)
                 sleep(3600)
             except Exception as e:
                 break
