@@ -1,14 +1,16 @@
 # Synthetix-Twitter-Bot
 A simple Twitter Bot to stay informed about Synthetix stats.
 
-For proof that the bot works, here's my twitter handle. Look at the latest tweets I sent:
-[@zachariemcc](https://twitter.com/zachariemcc)
+### EDIT  
 
-###EDIT
 Added timestamps (idea came from [spiyer99](https://github.com/spiyer99/synthetix_stats_twitter_bot)).  
 Also decided to remove the market cap to be able to keep the total value stacked<br/>
 in ETH and BTC (also from [spiver99](https://github.com/spiyer99/synthetix_stats_twitter_bot)).  
 I did keep the total value staked (ETH+BTC) converted to USD with live rates.
+
+As proof, here's a picture from my bot Tweeter account:  
+![Proof](https://user-images.githubusercontent.com/13340366/118216281-3c271400-b441-11eb-8688-f4d5e5fa99ee.png)
+
 
 TODOs:
 - [X] Setup Twitter Dev account and app

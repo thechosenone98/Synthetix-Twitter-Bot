@@ -5,6 +5,7 @@ from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
+import pytz
 from datetime import datetime
 import cryptocompare
 
@@ -70,9 +71,9 @@ if __name__ == "__main__":
          "#__next > section > div:nth-child(3) > div.StatsRow__StatsRowContainer-sc-8kudbj-0.cLYEnH > div:nth-child(4) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
         ("Trading Fees",
          "#__next > section > div:nth-child(3) > div.StatsRow__StatsRowContainer-sc-8kudbj-0.cLYEnH > div:nth-child(2) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
-        ("Total Value Locked ETH",
+        ("Value Locked ETH",
          "#__next > section > div:nth-child(1) > div:nth-child(6) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
-        ("Total Value Locked BTC",
+        ("Value Locked BTC",
          "#__next > section > div:nth-child(1) > div:nth-child(6) > div:nth-child(2) > div.StatsBox__StatsBoxNumber-z4sjtw-4.dwMgWP"),
         ("Amount of SNX Staked",
          "#__next > section > div:nth-child(1) > div:nth-child(4) > div:nth-child(1) > div.StatsBox__StatsBoxNumber-z4sjtw-4.gGHOuN"),
@@ -118,8 +119,8 @@ if __name__ == "__main__":
                     else:
                         tweet_content += f"{name} : ${amount:,.2f}\n"
 
-                # Add the date to the end of the tweet
-                tweet_content += "\n" + datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+                # Add the date to the end of the tweet (in UTC timezone)
+                tweet_content += "\n" + datetime.now(tz=pytz.UTC).strftime("%d/%m/%Y %H:%M:%S") + " UTC"
 
                 # Some debug prints
                 print("Tweeting : \n" + tweet_content)
