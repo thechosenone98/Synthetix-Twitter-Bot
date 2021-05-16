@@ -11,6 +11,7 @@ I did keep the total value staked (ETH+BTC) converted to USD with live rates.
 As proof, here's a picture from my bot Tweeter account:  
 ![Proof](https://user-images.githubusercontent.com/13340366/118216281-3c271400-b441-11eb-8688-f4d5e5fa99ee.png)
 
+Here's a link to it if you want to go and have a look for yourself: [@TwitterBot2](https://twitter.com/TwittterBot2)
 
 TODOs:
 - [X] Setup Twitter Dev account and app
