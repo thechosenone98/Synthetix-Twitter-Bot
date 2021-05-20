@@ -26,7 +26,7 @@ TODOs:
 3. Run `pip install requirement.txt` in the `venv` you've just created
 4. Create an app in your Twitter developer account (https://developer.twitter.com/en)
 5. Create an account on https://www.cryptocompare.com/ and get your API key
-6. Fill in the bot.py file with your Twitter app, Cryptocompare API keys and Chrome path
+6. Fill in the bot.py file with your Twitter app, Cryptocompare API keys
 7. Create App on Heroku
 8. Go to the ***Settings*** tab of your app and add these to your ***Buildpacks***:
     1. heroku/python
